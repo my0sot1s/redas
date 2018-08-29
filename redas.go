@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
-	"github.com/my0sot1s/tinker/utils"
+	logx "github.com/my0sot1s/godef/log"
 )
 
 // RedisCli rd
@@ -27,10 +27,10 @@ func (rc *RedisCli) InitRd(redisHost, redisDb, redisPass string) error {
 	_, err := rc.client.Ping().Result()
 	// fmt.Println(pong, err)
 	if err != nil {
-		utils.ErrLog(err)
+		logx.ErrLog(err)
 		return err
 	}
-	utils.Log("+ REDIS CONNECTED RDNAME : ", redisDb)
+	logx.Log("+ REDIS CONNECTED RDNAME : ", redisDb)
 
 	return nil
 }
@@ -58,9 +58,9 @@ func (rc *RedisCli) LPushItem(key string, timeExpired int, values ...interface{}
 	// str := make([]string, 0)
 	for _, v := range values {
 		b, e := json.Marshal(v)
-		utils.ErrLog(e)
+		logx.ErrLog(e)
 		_, err := rc.client.LPush(key, string(b)).Result()
-		utils.ErrLog(err)
+		logx.ErrLog(err)
 	}
 	rc.SetExpired(key, timeExpired)
 	return nil
@@ -84,6 +84,6 @@ func (rc *RedisCli) SetExpired(key string, min int) bool {
 	d := time.Duration(min) * time.Minute
 
 	b, err := rc.client.Expire(key, d).Result()
-	utils.ErrLog(err)
+	logx.ErrLog(err)
 	return b
 }
